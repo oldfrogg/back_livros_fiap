@@ -1,0 +1,110 @@
+No diretório que quero iniciar meu projeto node:
+> npm init -y // inicio um projeto node (-y significa "sim")
+> npm install nodemon // reinicia o servidor sempre que eu salvar uma alteração
+> npm install express // facilitar o uso e integração de rotas
+> npm install sequelize // ORM
+> npm install mysql2 // conexão ao BD
+> npm install dotenv // variáveis de ambiente
+> npm install swagger-jsdoc // documentação swagger com js
+> npm install swagger-ui-express // documentação swagger com express
+
+Crio um diretório chamado "src"
+Dentro de "src", crio um arquivo "app.js", este será meu servidor.
+
+Alterar o package.json, adicionando abaixo do main:
+"type": "module",
+Isso irá permitir a impotação por módulos, utilizando "import" e "export"
+Altero também o "main", para definir meu arquivo principal de execução:
+"main": "src/app.js",
+E, dentro de scripts, adiciono:
+"dev": "nodemon app.js",
+Assim posso iniciar pelo nodemon em modo de desenvolvedor através do comando
+> npm run dev
+
+Faço um "Hello, World" para testar meu ambiente:
+import http from "http"; // Nativo do Node. Estou criando um servidor local HTTP que simula um servidor online.
+const PORT = 3000;
+const server = http.createServer((req, res) => {
+	res.writeHead(200, { "Content-Type": "text/plain" }); // cabeçalho da resposta. plain é texto simples. Se for um HTML, utilizar text/html. Se um json, application/json, etc...
+	res.end("Hello, World"); // Texto que será trafegado
+});
+
+server.listen(PORT, () => { //porta 3000
+	console.log("Servidor escutando!")
+});
+
+
+Agora posso fazer uma edição básica, separando as rotas:
+const rotas = {
+    "/": "Hello, World!"
+}
+...
+res.end(rotas[req.url])
+
+
+Agora, instalo o express, para facilitar a criação de rotas, e ter a responsabilidade de criar rotas, ouvir servidor, pegar req e res, e manejá-las.
+> npm install express
+
+E, no código:
+import express from "express"
+const app = express();
+app.get("/", (req, res) => {
+	res.writeHead(200, { "Content-Type": "text/plain" });
+	res.status(200).send("Hello, World!") // .send porque é um plain. Poderia um .json, caso retornasse um JSON.
+};
+export default app; // bem tipo React
+
+
+Alguns tipos de cabeçalho:
+    host é o domínio do servidor que receberá a requisição.
+    User-agent identifica o cliente, por exemplo, dados do navegador de onde está saindo a requisição.
+    Content-Type é o formato do dado que está sendo enviado no body da requisição, por exemplo JSON, string etc. Confira a lista completa de tipos de dados e como devem ser declarados no header.
+    Authorization são as credenciais de autenticação para acesso a recursos protegidos.
+    Accept especifica o formato de retorno esperado na resposta, por exemplo, JSON.
+
+No Body da requisição são trafegados dados enviados pelo cliente para serem recebidos pelo servidor, normalmente utilizado para dados mais estruturados e em requisições POST, PUT or PATCH.
+O tipo de dado enviado pelo body deve ser o mesmo especificado no Content-Type, por exemplo, application/json.
+
+As partes que podem compor a resposta são:
+    Status da resposta, que contém a versão HTTP utilizada, o código de status e a mensagem de status. Por exemplo, HTTP/1.1 200 OK.
+    Headers ou cabeçalhos, com informações adicionais sobre a resposta ou o conteúdo da resposta. Por exemplo:
+        Content-Type;
+        Content-Length, que corresponde ao tamanho em bytes do corpo da resposta;
+        Cache-Control, que são as instruções de cache para a resposta;
+        Set-Cookie, que adiciona um valor de cookie ao navegador. Caso queira saber mais, confira este artigo sobre o que são cookies e como são utilizados.
+    Body, o corpo da resposta, que contém os dados ou o conteúdo solicitado pelo cliente através da requisição e enviado pelo servidor. O formato de dados do body vai depender do formato especificado em Content-Type, por exemplo JSON.
+
+Crio todos os diretórios que irão separar as responsabilidades, com um index.js para centralizar os exports e cada objeto.
+Models -> Modelos que representarão as entidades do BD
+Repositories -> Que farão as queries ao BD
+Services -> Fará a validação dos dados e da lógica de negócios
+Controllers -> Centralização HTTP: Recebe as requisições com os parâmetros, dá os códigos de respostas e chama os services correspondentes
+Routes -> Constará as rotas disponíveis, chamando o controller correspondente.
+Seed -> Dados iniciais para preencher o BD, e, se for o caso, para criá-lo.
+Swagger -> Centraliza a documentação. Mas o arquivo swagger.js ficará na raiz.
+Config -> Concentrar a configuração do BD, variáveis do ambiente (dotenv) e outras configurações, como logger e JWT.
+Posso também fazer Utils e Helpers, para colocar funções auxiliares reutilizáveis, Middlewares, para tratamento de erros, autenticação, etc, Tests, para centralizar os testes.
+
+O express facilita muito minhas rotas, enxugando o código:
+
+app.get("/livros", (req, res) => {
+    res.status(200).json(livros)
+})
+
+Mas por organização de código, já que ele pode crescer muito, divido ele nas partes informadas anteriormente.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
